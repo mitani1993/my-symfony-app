@@ -6,6 +6,8 @@
 </head>
 <body>
     <h1>{{ controller_name }}</h1>
-    <p>これは、サンプルのテンプレートによる表示です。</p>
+    <p>これは、{{ prev_action }}アクションから{{ action }}に送られたものです。</p>
+    <p>メッセージ: {{ message }}</p>
+    <p><a href="/other/{{action}}/{{message}}">next page</a></p>
 </body>
 </html>
