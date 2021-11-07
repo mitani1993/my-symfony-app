@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -12,16 +13,14 @@ class HelloController extends AbstractController
      * @Route("/hello", name="hello")
      *
      */
-    public function index()
+    public function index(Request $request)
     {
-        $result = '<html><body>';
-        $result = '<h1>Subscribed Service</h1>';
-        $result .= '<ol>';
-        $arr = $this->getSubscribedServices();
-        foreach ($arr as $key => $value) {
-            $result .= '<li>' . $key . '</li>';
-        }
-        $result .= '</ol>';
+        $name = $request->get('name');
+        $pass = $request->get('pass');
+        $result = '<html><body><ol>';
+        $result .= '<h1>Parameter</h1>';
+        $result .= '<p>name: ' . $name . '</p>';
+        $result .= '<p>pass: ' . $pass . '</p>';
         $result .= '</body></html>';
 
         return new Response($result);
