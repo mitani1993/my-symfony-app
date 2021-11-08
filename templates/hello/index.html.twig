@@ -2,16 +2,13 @@
 
 {% block page %}{{ title }}{% endblock %}
 {% block title %}{{ title }}{% endblock %}
+{% import 'macro.html.twig' as m %}
 
 {% block body %}
-    {% set price = 12300 %}
-    {% with %}
-        {% set price = 1000 %}
-        <p>金額: {{ price }}</p>
-        {% set taxprice = price * 1.1 %}
-        <p>税込み: {{ taxprice }}</p>
-    {% endwith %}
-     <p>金額: {{ price }}</p>
-    {% set taxprice = price * 1.1 %}
-    <p>税込み: {{ taxprice }}</p>
+<table>
+    {{ m.input('text', 'Name', 'noname') }}
+    {{ m.input('number', 'Age', '0') }}
+    {{ m.input('email', 'Mail', 'no@mail') }}
+    {{ m.submit('Click') }}
+</table>
 {% endblock %}
