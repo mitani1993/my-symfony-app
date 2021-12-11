@@ -30,13 +30,30 @@ class HelloController extends AbstractController
     }
 
     /**
-     * @Route("/find{id}", name="find")
+     * @Route("/find", name="find")
      */
-    public function find(Request $request, Person $person)
+    public function find(Request $request)
     {
-        return $this->render('hello/find.html.twig',[
+        $formObj = new FindForm();
+        $form = $this->createFormBuilder($formObj)
+            ->add('find', TextType::class)
+            ->add('save', SubmitType::class, array('label' => 'Click'))
+            ->getForm();
+        $repository = $this->getDoctrine()
+            ->getRepository(Person::class);
+
+        if ($request->getMethod() == 'POST') {
+            $form->handleRequest($request);
+            $findStr = $form->getData()->getFind();
+            $result = $repository->findByName($findStr);
+        } else {
+            $result = $repository->findAllWithSort();
+        }
+
+        return $this->render('hello/find.html.twig', [
             'title' => 'Hello',
-            'data' => $person,
+            'form' => $form->createView(),
+            'data' => $result,
         ]);
     }
 
@@ -49,19 +66,19 @@ class HelloController extends AbstractController
         $form = $this->createForm(PersonType::class, $person);
         $form->handleRequest($request);
 
-            if ($request->getMethod() == 'POST') {
-                $person = $form->getData();
-                $manager = $this->getDoctrine()->getManager();
-                $manager->persist($person);
-                $manager->flush();
-                return $this->redirect('/hello');
-            } else {
-                return $this->render('hello/create.html.twig',[
-                    'title' => 'Hello',
-                    'message' => 'Create Entity',
-                    'form' => $form->createView(),
-                ]);
-            }
+        if ($request->getMethod() == 'POST') {
+            $person = $form->getData();
+            $manager = $this->getDoctrine()->getManager();
+            $manager->persist($person);
+            $manager->flush();
+            return $this->redirect('/hello');
+        } else {
+            return $this->render('hello/create.html.twig', [
+                'title' => 'Hello',
+                'message' => 'Create Entity',
+                'form' => $form->createView(),
+            ]);
+        }
     }
 
     /**
@@ -79,7 +96,7 @@ class HelloController extends AbstractController
             $manager->flush();
             return $this->redirect('/hello');
         } else {
-            return $this->render('hello/create.html.twig',[
+            return $this->render('hello/create.html.twig', [
                 'title' => 'Hello',
                 'message' => 'Update Entity id=' . $person->getId(),
                 'form' => $form->createView(),
@@ -102,7 +119,7 @@ class HelloController extends AbstractController
             $manager->flush();
             return $this->redirect('/hello');
         } else {
-            return $this->render('hello/create.html.twig',[
+            return $this->render('hello/create.html.twig', [
                 'title' => 'Hello',
                 'message' => 'Delete Entity id=' . $person->getId(),
                 'form' => $form->createView(),
