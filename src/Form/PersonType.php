@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Form;
 
 use App\Entity\Person;
@@ -14,11 +15,11 @@ class PersonType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('name', TextType::class)
-        ->add('mail', TextType::class)
-        ->add('age', IntegerType::class)
-        ->add('save', SubmitType::class, array('label' => 'Click'))
-        ->getForm();
+            ->add('name', TextType::class, array('required' => false))
+            ->add('mail', TextType::class, array('required' => false))
+            ->add('age', IntegerType::class, array('required' => false))
+            ->add('save', SubmitType::class, array('label' => 'Click'))
+            ->getForm();
     }
 
     public function configureOptions(OptionsResolver $resolver)

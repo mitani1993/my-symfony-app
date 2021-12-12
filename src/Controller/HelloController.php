@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class HelloController extends AbstractController
 {
@@ -70,7 +71,7 @@ class HelloController extends AbstractController
     /**
      * @Route("/create", name="create")
      */
-    public function create(Request $request)
+    public function create(Request $request, ValidatorInterface $validator)
     {
         $person = new Person();
         $form = $this->createForm(PersonType::class, $person);
@@ -78,10 +79,20 @@ class HelloController extends AbstractController
 
         if ($request->getMethod() == 'POST') {
             $person = $form->getData();
-            $manager = $this->getDoctrine()->getManager();
-            $manager->persist($person);
-            $manager->flush();
-            return $this->redirect('/hello');
+            $errors = $validator->validate($person);
+
+            if (count($errors) == 0) {
+                $manager = $this->getDoctrine()->getManager();
+                $manager->persist($person);
+                $manager->flush();
+                return $this->redirect('/hello');
+            } else {
+                return $this->render('hello/create.html.twig', [
+                    'title' => 'Error!',
+                    'message' => 'Create Entity',
+                    'form' => $form->createView(),
+                ]);
+            }
         } else {
             return $this->render('hello/create.html.twig', [
                 'title' => 'Hello',
